@@ -3,7 +3,7 @@
 # Script to create RDS MySQL 8.0.41 instance
 # Configuration:
 # - Single-AZ
-# - DB cluster identifier: mcpdb
+# - DB cluster identifier: mcpdbserver
 # - Master username: admin
 # - Instance class: db.t3.medium
 # - Storage: gp3, 50GB
@@ -22,8 +22,8 @@ echo "Available subnets: $SUBNET_IDS"
 # Create DB subnet group with properly formatted subnet IDs
 echo "Creating DB subnet group..."
 aws rds create-db-subnet-group \
-    --db-subnet-group-name mcpdb-subnet-group \
-    --db-subnet-group-description "Subnet group for mcpdb" \
+    --db-subnet-group-name mcpdbserver-subnet-group \
+    --db-subnet-group-description "Subnet group for mcpdbserver" \
     --subnet-ids $(echo $SUBNET_IDS)
 
 # Check if security group exists or create new one
@@ -56,9 +56,9 @@ echo "Please enter the master password for the RDS instance:"
 read -s MASTER_PASSWORD
 
 # Create the RDS instance
-echo "Creating RDS MySQL instance 'mcpdb'..."
+echo "Creating RDS MySQL instance 'mcpdbserver'..."
 aws rds create-db-instance \
-    --db-instance-identifier mcpdb \
+    --db-instance-identifier mcpdbserver \
     --db-instance-class db.t3.medium \
     --engine mysql \
     --engine-version 8.0.41 \
@@ -67,9 +67,9 @@ aws rds create-db-instance \
     --allocated-storage 50 \
     --storage-type gp3 \
     --vpc-security-group-ids $SG_ID \
-    --db-subnet-group-name mcpdb-subnet-group \
+    --db-subnet-group-name mcpdbserver-subnet-group \
     --no-publicly-accessible \
     --no-multi-az
 
 echo "RDS MySQL instance creation initiated. It may take several minutes to complete."
-echo "You can check the status with: aws rds describe-db-instances --db-instance-identifier mcpdb --query 'DBInstances[0].DBInstanceStatus'"
+echo "You can check the status with: aws rds describe-db-instances --db-instance-identifier mcpdbserver --query 'DBInstances[0].DBInstanceStatus'"
